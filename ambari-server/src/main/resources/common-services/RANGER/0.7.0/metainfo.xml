@@ -18,6 +18,9 @@
  * limitations under the License.
  */
 -->
+
+<!-- TODO ambari-server/src/main/resources/common-services/对应组件的所有metainfo.xml文件 -->
+
 <metainfo>
   <schemaVersion>2.0</schemaVersion>
   <services>

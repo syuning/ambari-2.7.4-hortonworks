@@ -1,0 +1,58 @@
+FROM CentOS7
+LABEL maintainer="Lynn Yuan <yuanxiaolong@inspur.com>"
+
+# "/usr/lib/jdk-1.8.0-232"
+ENV JAVA_HOME /usr/lib/jdk-1.8.0-232 
+ENV CLASSPATH ${JAVA_HOME}/jre/lib:${JAVA_HOME}/lib
+
+ENV TZ Asia/Shanghai
+
+ENV PATH ${JAVA_HOME}/bin:$PATH:/opt/apache-maven-3.5.4/bin:/opt/apache-ant-1.10.7/bin
+
+ENV HD1_REPO_URL http://10.221.129.22/InspurHD1.0
+ENV AMBARI_VERSION 2.7.3.0.0
+
+RUN set -x \
+    && yum update \
+    && yum install -y wget vim curl net-tools telnet procps gzip python2.7 python-pip python-dev git
+
+RUN set -x \
+  && wget ${HD1_REPO_URL}/jdk/jdk-1.8.0-232.tar.gz  -O /tmp/jdk-1.8.0-232.tar.gz \
+  && tar -zxvf /tmp/jdk-1.8.0-232.tar.gz -C /usr/lib/ \
+#  && mv /usr/lib/jdk-1.8.0-232 ${JAVA_HOME} \
+  && chmod -R 755 ${JAVA_HOME} \
+  && java -version
+
+RUN set -x \
+  && cd /opt \
+  && wget http://mirrors.hust.edu.cn/apache/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz \
+  && tar -zxvf apache-maven-3.5.4-bin.tar.gz \
+  && mvn -version \
+  && wget http://mirrors.hust.edu.cn/apache/ant/binaries/apache-ant-1.10.7-bin.tar.gz \
+  && tar -zxvf apache-ant-1.10.7-bin.tar.gz \
+  && ant -version
+
+#download codes @ encoded %40
+RUN set -x \
+  && mkdir /bigdata \
+  && cd /bigdata \
+  && git clone http://yuanxiaolong:inspur%401909@git.inspur.com/Insight-HD/insight-hd/inspurhd.git \
+  && cd inspurhd \
+  && git branch -a \
+  && git checkout -b 2.7.3.0.0-kylin-arm64  remotes/origin/2.7.3.0.0-kylin-arm64 \
+  && git branch
+
+ADD settings.xml /opt/apache-maven-3.5.4/conf/settings.xml
+
+RUN set -x \
+  && cd /bigdata/inspurhd \
+  && mvn versions:set -DnewVersion=${AMBARI_VERSION}
+
+#RUN set -x \
+#  && mvn -B clean install jdeb:jdeb -Drat.skip=true -DnewVersion=${AMBARI_VERSION} -DbuildNumber=631319b00937a8d04667d93714241d2a0cb17275 -DskipTests -Dpython.ver="python >= 2.6"
+
+WORKDIR /bigdata/inspurhd
+
+#docker build --rm -t yuanxl/ambari-cmp-env:2.7.3.0.0 .
+#docker run -it -v /media/lynn/disk_d/program_data/repository:/root/.m2/repository yuanxl/ambari-cmp-env:2.7.3.0.0 bash
+#git pull
