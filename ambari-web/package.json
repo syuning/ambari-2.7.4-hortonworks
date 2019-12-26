@@ -18,7 +18,8 @@
     "ember-radio-button": "0.1.2",
     "javascript-brunch": ">= 1.0 < 1.5",
     "less-brunch": ">= 1.0 < 1.5",
-    "uglify-js-brunch": ">= 1.0 < 1.5"
+    "uglify-js-brunch": ">= 1.0 < 1.5",
+    "yarn": "^0.23.2"
   },
   "devDependencies": {
     "babel": "^6.5.2",

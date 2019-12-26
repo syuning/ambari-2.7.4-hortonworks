@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <apply executable="/Users/songyuning/workspace/Codes/ambari-2.7.4-sourcecode/ambari-web/gzip-content.sh">
+    <arg value="-f"/>
+    <arg value="-c"/>
+    <fileset dir="/Users/songyuning/workspace/Codes/ambari-2.7.4-sourcecode/ambari-web/public/img/">
+      <patternset>
+        <include name="**/*.png"/>
+      </patternset>
+    </fileset>
+  </apply>
+</target>
+</project>
